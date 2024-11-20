@@ -1,19 +1,34 @@
 # Jenkins Error 페이지 설정
 
-## 목적
-Jenkins를 사용할 때 내장되어 있는 웹서버를 사용할 경우 (tomcat과 같은 다른 WAS사용 없이), 403/404와 같은 에러페이지 발생 시 Jetty의 버전 정보가 노출되어 해당 정보가 출력되지 않도록 수정이 필요했다.
+Jenkins를 사용할 때 내장되어 있는 웹서버를 사용할 경우, 401/403/404 에러 발생 시 Jetty의 버전 정보가 노출되어 해당 정보가 출력되지 않도록 수정이 필요했다.
+
+## Jenkins Version
+```
+2.289.1
+```
 
 ## 조치방법
 ### web 설정 경로
 웹설정관련 파일이 위치한 경로   
-CentOS 7 : /var/cache/war (관련 설정이 없을 경우 default 경로)
+CentOS 7 : /var/cache/jenkins/war (WEB_ROOT 경로)
 
 ### error page 생성
-mkdir $WEB_HOME/error_page
-vi error_page.html
+```bash
+mkdir /var/cache/jenkins/war/error
+vi error_404.html # 404 에러 발생시 나타낼 페이지 생성
+```
 
 ### error page 설정
-vi web.xml
-error 추가
+web 설정 파일에 에러코드에 맞는 html 파일 경로 매핑 설정 추가
+- WEB_INF/web.xml
+```xml
+  <error-page>
+    <error-code>404</error-code>
+    <location>/error/error_404.html</location>
+  </error-page>
+  ```
 
 ### Jenkins 재기동
+```bash
+sudo systemctl restart jenkins
+```
